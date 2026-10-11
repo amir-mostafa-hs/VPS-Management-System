@@ -35,28 +35,34 @@ jobs:
           fi
           echo "Sync token is configured"
 
-      - name: Authenticate and fetch destination
+      - name: Configure destination authentication
         env:
           SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
         run: |
           set +x
-
-          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$SYNC_TOKEN" | base64 -w 0)" \
-            ls-remote "https://github.com/${DESTINATION_REPO}.git" refs/heads/main
-
-      - name: Fetch destination
-        env:
-          SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
-        run: |
+          git config --local --unset-all http.https://github.com/.extraheader || true
+          git remote remove destination || true
           git remote add destination \
             "https://x-access-token:${SYNC_TOKEN}@github.com/${DESTINATION_REPO}.git"
 
-          git fetch destination main
+          git ls-remote destination refs/heads/main
+
+      - name: Fetch destination branch
+        run: |
+          if git ls-remote --exit-code destination refs/heads/main >/dev/null 2>&1; then
+            git fetch destination main
+          else
+            echo "Destination main branch not found, initial sync will create it."
+          fi
 
       - name: Merge source into destination
         run: |
-          git checkout -B sync-target destination/main
-          git merge --no-edit origin/main
+          if git show-ref --verify --quiet refs/remotes/destination/main; then
+            git checkout -B sync-target destination/main
+            git merge --no-edit origin/main
+          else
+            git checkout -B sync-target origin/main
+          fi
 
       - name: Push merged changes
         run: |
