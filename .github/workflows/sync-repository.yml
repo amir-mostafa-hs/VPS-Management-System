@@ -55,6 +55,11 @@ jobs:
             echo "Destination main branch not found, initial sync will create it."
           fi
 
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Merge source into destination
         run: |
           if git show-ref --verify --quiet refs/remotes/destination/main; then
