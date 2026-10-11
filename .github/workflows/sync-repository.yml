@@ -16,25 +16,22 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # Prevent execution in the destination repository if the workflow is synced with the code
     if: ${{ vars.SYNC_DESTINATION_REPO != github.repository }}
     env:
       DESTINATION_REPO: ${{ vars.SYNC_DESTINATION_REPO }}
       SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
+      EXCLUDE_PATHS: |
+        .github/workflows/sync-repository.yml
 
     steps:
       - name: Validate configuration
         run: |
           if [ -z "$DESTINATION_REPO" ]; then
-            echo "::error::Repository variable SYNC_DESTINATION_REPO is not set (format: owner/repo)."
+            echo "::error::Repository variable SYNC_DESTINATION_REPO is not set (owner/repo)."
             exit 1
           fi
           if [ -z "$SYNC_TOKEN" ]; then
             echo "::error::Secret SYNC_REPO_TOKEN is missing."
-            exit 1
-          fi
-          if [ "$DESTINATION_REPO" = "$GITHUB_REPOSITORY" ]; then
-            echo "::error::Destination repo must differ from the source repo."
             exit 1
           fi
 
@@ -47,12 +44,25 @@ jobs:
       - name: Verify access to destination
         run: |
           if ! git ls-remote "https://x-access-token:${SYNC_TOKEN}@github.com/${DESTINATION_REPO}.git" HEAD >/dev/null 2>&1; then
-            echo "::error::Cannot access ${DESTINATION_REPO}. Check token permissions (Contents: Read and write), token repository access, and expiration."
+            echo "::error::Cannot access ${DESTINATION_REPO}. Check token permissions and expiration."
             exit 1
           fi
-          echo "Destination is reachable."
 
-      - name: Mirror main to destination
+      - name: Install git-filter-repo
+        run: pip install git-filter-repo
+
+      - name: Remove excluded paths from history
+        run: |
+          args=()
+          while IFS= read -r p; do
+            [ -n "$p" ] && args+=(--path "$p")
+          done <<< "$EXCLUDE_PATHS"
+
+          if [ ${#args[@]} -gt 0 ]; then
+            git filter-repo --force --invert-path "${args[@]}"
+          fi
+
+      - name: Mirror filtered main to destination
         run: |
           git remote add destination "https://x-access-token:${SYNC_TOKEN}@github.com/${DESTINATION_REPO}.git"
-          git push destination refs/remotes/origin/main:refs/heads/main --force
+          git push destination HEAD:refs/heads/main --force
