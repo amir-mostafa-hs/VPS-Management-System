@@ -23,6 +23,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check sync token configuration
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
+        run: |
+          if [ -z "$SYNC_TOKEN" ]; then
+            echo "SYNC_REPO_TOKEN is missing or unavailable"
+            exit 1
+          fi
+          echo "Sync token is configured"
+
+      - name: Authenticate and fetch destination
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
+        run: |
+          set +x
+
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$SYNC_TOKEN" | base64 -w 0)" \
+            ls-remote https://github.com/mrsbrwork/VPS-Management-System.git refs/heads/main
+
       - name: Fetch destination
         env:
           SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
