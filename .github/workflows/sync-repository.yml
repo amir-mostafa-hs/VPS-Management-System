@@ -1,4 +1,4 @@
-name: One-way Repository Sync
+name: One-way Repository Sync (A -> B)
 
 on:
   push:
@@ -16,59 +16,43 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    # Prevent execution in the destination repository if the workflow is synced with the code
+    if: ${{ vars.SYNC_DESTINATION_REPO != github.repository }}
     env:
-      DESTINATION_REPO: ${{ vars.SYNC_DESTINATION_REPO || github.repository }}
+      DESTINATION_REPO: ${{ vars.SYNC_DESTINATION_REPO }}
+      SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
 
     steps:
+      - name: Validate configuration
+        run: |
+          if [ -z "$DESTINATION_REPO" ]; then
+            echo "::error::Repository variable SYNC_DESTINATION_REPO is not set (format: owner/repo)."
+            exit 1
+          fi
+          if [ -z "$SYNC_TOKEN" ]; then
+            echo "::error::Secret SYNC_REPO_TOKEN is missing."
+            exit 1
+          fi
+          if [ "$DESTINATION_REPO" = "$GITHUB_REPOSITORY" ]; then
+            echo "::error::Destination repo must differ from the source repo."
+            exit 1
+          fi
+
       - name: Checkout source repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Check sync token configuration
-        env:
-          SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
+      - name: Verify access to destination
         run: |
-          if [ -z "$SYNC_TOKEN" ]; then
-            echo "SYNC_REPO_TOKEN is missing or unavailable"
+          if ! git ls-remote "https://x-access-token:${SYNC_TOKEN}@github.com/${DESTINATION_REPO}.git" HEAD >/dev/null 2>&1; then
+            echo "::error::Cannot access ${DESTINATION_REPO}. Check token permissions (Contents: Read and write), token repository access, and expiration."
             exit 1
           fi
-          echo "Sync token is configured"
+          echo "Destination is reachable."
 
-      - name: Configure destination authentication
-        env:
-          SYNC_TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
+      - name: Mirror main to destination
         run: |
-          set +x
-          git config --local --unset-all http.https://github.com/.extraheader || true
-          git remote remove destination || true
-          git remote add destination \
-            "https://x-access-token:${SYNC_TOKEN}@github.com/${DESTINATION_REPO}.git"
-
-          git ls-remote destination refs/heads/main
-
-      - name: Fetch destination branch
-        run: |
-          if git ls-remote --exit-code destination refs/heads/main >/dev/null 2>&1; then
-            git fetch destination main
-          else
-            echo "Destination main branch not found, initial sync will create it."
-          fi
-
-      - name: Configure git identity
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Merge source into destination
-        run: |
-          if git show-ref --verify --quiet refs/remotes/destination/main; then
-            git checkout -B sync-target destination/main
-            git merge --no-edit --allow-unrelated-histories origin/main
-          else
-            git checkout -B sync-target origin/main
-          fi
-
-      - name: Push merged changes
-        run: |
-          git push destination sync-target:main
+          git remote add destination "https://x-access-token:${SYNC_TOKEN}@github.com/${DESTINATION_REPO}.git"
+          git push destination refs/remotes/origin/main:refs/heads/main --force
