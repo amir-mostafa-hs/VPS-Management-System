@@ -59,7 +59,7 @@ jobs:
         run: |
           if git show-ref --verify --quiet refs/remotes/destination/main; then
             git checkout -B sync-target destination/main
-            git merge --no-edit origin/main
+            git merge --no-edit --allow-unrelated-histories origin/main
           else
             git checkout -B sync-target origin/main
           fi
