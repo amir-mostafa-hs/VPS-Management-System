@@ -4,14 +4,14 @@
 
 **Blocked by:** 01: Testing harness, Makefile, and Repository Scaffolding
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## Acceptance Criteria
 
-- [ ] `scripts/preflight.sh` created with read-only inspection of OS distro/version, kernel, CPU cores, RAM, free disk space, open ports, and virtualization.
-- [ ] `scripts/preflight.sh` enforces supported matrix (Debian 12/13, Ubuntu 22.04/24.04, x86_64/ARM64) and fails with clear advice on unsupported platforms.
-- [ ] `scripts/bootstrap.sh` created to update APT package index and install essential dependencies (`curl`, `git`, `ufw`, `fail2ban`, `jq`, `rclone`, `ca-certificates`) idempotently.
-- [ ] `scripts/bootstrap.sh` supports `--dry-run` and `--help` flags.
+- [x] `scripts/preflight.sh` created with read-only inspection of OS distro/version, kernel, CPU cores, RAM, free disk space, open ports, and virtualization.
+- [x] `scripts/preflight.sh` enforces supported matrix (Debian 12/13, Ubuntu 22.04/24.04, x86_64/ARM64) and fails with clear advice on unsupported platforms.
+- [x] `scripts/bootstrap.sh` created to update APT package index and install essential dependencies (`curl`, `git`, `ufw`, `fail2ban`, `jq`, `rclone`, `ca-certificates`) idempotently.
+- [x] `scripts/bootstrap.sh` supports `--dry-run` and `--help` flags.
 
 ## Quality & Test Criteria (TDD Seam)
 
@@ -22,3 +22,7 @@
   - CLI Contracts: Running `scripts/preflight.sh --help` and `scripts/bootstrap.sh --help` prints usage and exits 0.
   - Dry-run Safety: Running `scripts/bootstrap.sh --dry-run` outputs planned APT commands without executing package modifications.
   - Regression: `make test` runs and passes.
+
+## Resolution
+
+All acceptance criteria completed. `scripts/preflight.sh` and `scripts/bootstrap.sh` were implemented with support matrix enforcement, dry-run safety, and full TDD coverage in `tests/test_preflight_and_bootstrap.sh` with 15/15 tests passing.
