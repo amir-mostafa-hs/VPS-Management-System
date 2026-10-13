@@ -4,18 +4,18 @@
 
 **Blocked by:** 04: Docker Engine and Coolify Setup Automation
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## Acceptance Criteria
 
-- [ ] `scripts/health-check.sh` created implementing:
+- [x] `scripts/health-check.sh` created implementing:
   - System load and CPU usage check.
   - Memory usage and swap pressure check.
   - Disk usage and inode exhaustion warning (alerting if disk > 80% full).
   - Docker daemon responsiveness check.
   - Inspection of Docker containers reporting unhealthy or restarting states.
   - Colorized console output and structured JSON/exit code output suitable for automated alerting.
-- [ ] `docs/monitoring.md` and `monitoring/README.md` created covering alert thresholds, host metrics interpretation, Docker container health check syntax in Dockerfiles, and log retention.
+- [x] `docs/monitoring.md` and `monitoring/README.md` created covering alert thresholds, host metrics interpretation, Docker container health check syntax in Dockerfiles, and log retention.
 
 ## Quality & Test Criteria (TDD Seam)
 
@@ -29,3 +29,6 @@
   - Container Inspection: Simulates Docker reporting an unhealthy container -> correctly flags container and emits failure status.
   - JSON Output Mode: Running with `--json` outputs valid parseable JSON.
   - Regression: `make test` runs and passes.
+
+## Resolution
+Implemented `scripts/health-check.sh` with CPU, memory, disk, inode, and Docker health evaluation, supporting console, colorized, and parseable JSON formats. Created `docs/monitoring.md` and `monitoring/README.md` covering host metrics, container health checks, alerting hooks, and log retention. Verified with 12 automated unit and contract tests in `tests/test_health_check.sh`.
