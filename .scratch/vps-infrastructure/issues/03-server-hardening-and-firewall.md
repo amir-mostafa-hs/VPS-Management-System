@@ -4,15 +4,15 @@
 
 **Blocked by:** 02: Platform Preflight Diagnostics and System Bootstrap
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## Acceptance Criteria
 
-- [ ] `config/server.example.env` created with non-secret environment defaults (`SSH_PORT=22`, `UFW_ENABLED=true`, etc.).
-- [ ] `config/allowed_ports.conf` created as a declarative, commented file for operators to specify additional inbound ports and protocols.
-- [ ] `scripts/harden-server.sh` created to configure UFW: allows base ports (SSH, 80, 443, 8000) and dynamically parses `config/allowed_ports.conf`.
-- [ ] `scripts/harden-server.sh` displays planned firewall changes, warns before enabling, and requires explicit user confirmation (bypassed only in `--dry-run` or with `--yes`).
-- [ ] SSH verification checks included to prevent disabling password authentication or root login prematurely without confirmed key access.
+- [x] `config/server.example.env` created with non-secret environment defaults (`SSH_PORT=22`, `UFW_ENABLED=true`, etc.).
+- [x] `config/allowed_ports.conf` created as a declarative, commented file for operators to specify additional inbound ports and protocols.
+- [x] `scripts/harden-server.sh` created to configure UFW: allows base ports (SSH, 80, 443, 8000) and dynamically parses `config/allowed_ports.conf`.
+- [x] `scripts/harden-server.sh` displays planned firewall changes, warns before enabling, and requires explicit user confirmation (bypassed only in `--dry-run` or with `--yes`).
+- [x] SSH verification checks included to prevent disabling password authentication or root login prematurely without confirmed key access.
 
 ## Quality & Test Criteria (TDD Seam)
 
@@ -23,3 +23,7 @@
   - Dry-run & Boundary Mock: When executed with `--dry-run`, logs planned `ufw allow` commands matching base ports + custom ports from `allowed_ports.conf` without calling real `ufw`.
   - SSH Safety: Asserts that running hardening without confirmed SSH key access warns operator and avoids locking out remote sessions.
   - Regression: `make test` runs and passes.
+
+## Resolution
+
+All acceptance criteria completed. `config/server.example.env`, `config/allowed_ports.conf`, and `scripts/harden-server.sh` were implemented with dynamic port parsing, dry-run safety, and full TDD coverage in `tests/test_harden_and_ports.sh` with 18/18 tests passing.
