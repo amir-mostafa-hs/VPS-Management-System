@@ -19,14 +19,15 @@ A fully prepared, modular, and locally validated `vps-infrastructure` repository
 ## Decisions so far
 
 - [01: Testing harness, Makefile, and Repository Scaffolding](issues/01-testing-and-repo-scaffolding.md): Implemented pure-Bash test runner, syntax validator, secret scanner, common.sh, .gitignore, and comprehensive Makefile.
-- [Supported OS and Architectures](issues/02-preflight-and-system-bootstrap.md): Debian 12 (Bookworm), Debian 13 (Trixie), Ubuntu 22.04 LTS, Ubuntu 24.04 LTS on x86_64 and ARM64.
-- [Deploy Trigger via Coolify Webhook](issues/05-ghcr-cicd-pipeline-and-deploy-webhook.md): GitHub Actions builds/pushes to GHCR and calls Coolify application Deploy Webhooks; production VPS does not build images.
-- [Two-Tiered Backup with rclone crypt](issues/06-automated-encrypted-backup-system.md): Tier 1 (Coolify core & APP_KEY) and Tier 2 (Postgres/MySQL dumps & app volumes), encrypted locally and uploaded to Google Drive.
-- [Automated Backup Scheduling](issues/06-automated-encrypted-backup-system.md): Automated daily execution via systemd timer (`vps-backup.timer`).
-- [Configurable Firewall Ports](issues/03-server-hardening-and-firewall.md): Base ports (SSH, 80, 443, 8000) plus custom rules via `config/allowed_ports.conf`.
-- [Traefik Reverse Proxy](issues/04-docker-and-coolify-installation.md): Rely natively on Coolify's built-in Traefik for Let's Encrypt SSL and domain routing.
-- [Automated Testing & Quality Gates](issues/01-testing-and-repo-scaffolding.md): TDD regression harness (`make check`, `make test`) guarding every ticket.
-- [Unified Makefile Command Interface](issues/01-testing-and-repo-scaffolding.md): Centralized, self-documenting commands (`make help`) for all testing and host operations.
+- [02: Preflight diagnostics and System Bootstrap](issues/02-preflight-and-system-bootstrap.md): Implemented OS detector (Debian 12/13, Ubuntu 22/24 on x86_64/ARM64) and system package bootstrap.
+- [03: Server Hardening and Configurable Firewall](issues/03-server-hardening-and-firewall.md): SSH hardening, default-deny UFW baseline, and dynamic custom port parsing via `config/allowed_ports.conf`.
+- [04: Docker Engine and Coolify Setup Automation](issues/04-docker-and-coolify-installation.md): Official Docker CE repo setup with daemon log rotation, plus Coolify v4 installer with APP_KEY safety warnings.
+- [05: GitHub Actions CI/CD Template & GHCR Deploy Webhook](issues/05-ghcr-cicd-pipeline-and-deploy-webhook.md): GitHub Actions builds/pushes to GHCR and calls Coolify application Deploy Webhooks; production VPS does not build images.
+- [06: Two-Tier Automated Encrypted Backup System](issues/06-automated-encrypted-backup-system.md): Tier 1 (Coolify core & APP_KEY) and Tier 2 (Postgres/MySQL dumps & app volumes), encrypted locally via `rclone crypt` and uploaded to Google Drive with systemd timers.
+- [07: Backup Verification and Explicit Cold-Start Restore Drill](issues/07-backup-verification-and-restore-drills.md): Remote listing/verification tool (`verify-backups.sh`) and cold-start interactive restore wizard (`restore-backup.sh`).
+- [08: Lightweight Host & Container Health Monitoring](issues/08-lightweight-monitoring-and-health-checks.md): Metric evaluation (CPU, RAM, swap, disk, inode, unhealthy containers) with JSON output mode (`health-check.sh`).
+- [09: Complete Operator Runbooks & Repository Finalization](issues/09-comprehensive-operations-documentation.md): Comprehensive operator documentation suite in `docs/`, root `README.md`, preserved `AGENTS.md` guidelines, and doc integrity tests.
+
 
 ## Not yet specified
 
