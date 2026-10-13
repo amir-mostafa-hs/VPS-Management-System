@@ -4,17 +4,17 @@
 
 **Blocked by:** 04: Docker Engine and Coolify Setup Automation
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## Acceptance Criteria
 
-- [ ] `.github/workflows/reusable-docker-build.yml` created demonstrating:
+- [x] `.github/workflows/reusable-docker-build.yml` created demonstrating:
   - Triggering on push to main and tags.
   - Building Docker images using GitHub-hosted runners (no production VPS build).
   - Scoped GitHub token permissions (`packages: write`, `contents: read`).
   - Tagging images with commit SHA (`sha-${{ github.sha }}`) and `latest`.
   - Triggering Coolify's application Deploy Webhook safely.
-- [ ] `docs/github-actions-ghcr.md` created with:
+- [x] `docs/github-actions-ghcr.md` created with:
   - Step-by-step instructions for generating GHCR pull credentials in Coolify without leaking tokens.
   - Instructions for configuring the Deploy Webhook secret.
   - Step-by-step runbook for manual image promotion and instant rollbacks to a previous commit SHA.
@@ -28,3 +28,7 @@
   - Offloaded Build Rule: Confirms the workflow uses `runs-on: ubuntu-latest` (GitHub-hosted runner) and contains zero self-hosted runner directives.
   - Webhook URL Safety: Verifies webhook calls use GitHub Secrets references rather than exposed URLs.
   - Regression: `make test` runs and passes.
+
+## Resolution
+
+All acceptance criteria completed. Reusable workflow created with GHCR authentication, commit SHA tagging, Deploy Webhook triggers, and comprehensive documentation in `docs/github-actions-ghcr.md` with 11/11 tests passing.
