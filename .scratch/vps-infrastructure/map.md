@@ -18,6 +18,7 @@ A fully prepared, modular, and locally validated `vps-infrastructure` repository
 
 ## Decisions so far
 
+- [01: Testing harness, Makefile, and Repository Scaffolding](issues/01-testing-and-repo-scaffolding.md): Implemented pure-Bash test runner, syntax validator, secret scanner, common.sh, .gitignore, and comprehensive Makefile.
 - [Supported OS and Architectures](issues/02-preflight-and-system-bootstrap.md): Debian 12 (Bookworm), Debian 13 (Trixie), Ubuntu 22.04 LTS, Ubuntu 24.04 LTS on x86_64 and ARM64.
 - [Deploy Trigger via Coolify Webhook](issues/05-ghcr-cicd-pipeline-and-deploy-webhook.md): GitHub Actions builds/pushes to GHCR and calls Coolify application Deploy Webhooks; production VPS does not build images.
 - [Two-Tiered Backup with rclone crypt](issues/06-automated-encrypted-backup-system.md): Tier 1 (Coolify core & APP_KEY) and Tier 2 (Postgres/MySQL dumps & app volumes), encrypted locally and uploaded to Google Drive.

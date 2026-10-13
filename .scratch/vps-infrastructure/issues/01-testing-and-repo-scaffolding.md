@@ -4,16 +4,16 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## Acceptance Criteria
 
-- [ ] `.gitignore` configured to exclude `.env`, `*.key`, `*.pem`, `*.tar.gz`, `*.bak`, `rclone.conf`, local temporary backup directories, and IDE state.
-- [ ] `scripts/common.sh` created with strict bash mode (`set -euo pipefail`), colorized logging functions (`log_info`, `log_warn`, `log_err`), privilege checks (`require_root`), and error trapping.
-- [ ] `tests/test_runner.sh` created as an automated pure-Bash test runner with assertions (`assert_eq`, `assert_exit_code`, `assert_output_contains`) and test summary report.
-- [ ] `tests/test_scripts_syntax.sh` created to validate all `.sh` files with `bash -n` and verify executable permissions.
-- [ ] `tests/test_secrets_scan.sh` created to scan the repository for accidental committed secrets, tokens, and private keys.
-- [ ] `Makefile` created providing a complete, self-documenting unified operator interface with `make help`:
+- [x] `.gitignore` configured to exclude `.env`, `*.key`, `*.pem`, `*.tar.gz`, `*.bak`, `rclone.conf`, local temporary backup directories, and IDE state.
+- [x] `scripts/common.sh` created with strict bash mode (`set -euo pipefail`), colorized logging functions (`log_info`, `log_warn`, `log_err`), privilege checks (`require_root`), and error trapping.
+- [x] `tests/test_runner.sh` created as an automated pure-Bash test runner with assertions (`assert_eq`, `assert_exit_code`, `assert_output_contains`) and test summary report.
+- [x] `tests/test_scripts_syntax.sh` created to validate all `.sh` files with `bash -n` and verify executable permissions.
+- [x] `tests/test_secrets_scan.sh` created to scan the repository for accidental committed secrets, tokens, and private keys.
+- [x] `Makefile` created providing a complete, self-documenting unified operator interface with `make help`:
   - **Quality & Verification Targets:**
     - `make check`: Syntax checks (`bash -n`) and secret audits.
     - `make lint`: ShellCheck linting and formatting.
@@ -40,3 +40,7 @@
   - Secret scanner flags known dummy credential patterns and passes on clean repo.
   - `make help` prints formatted, readable descriptions for 100% of defined targets.
   - `make check`, `make lint`, and `make test` return exit code 0.
+
+## Resolution
+
+All acceptance criteria completed. The TDD testing framework, secret scanner, syntax validator, `common.sh` helper library, `.gitignore`, and `Makefile` are fully implemented and verified with 15/15 tests passing.
