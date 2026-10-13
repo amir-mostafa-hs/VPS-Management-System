@@ -4,18 +4,18 @@
 
 **Blocked by:** 05: GitHub Actions CI/CD Template & GHCR Deploy Webhook, 07: Backup Verification and Explicit Cold-Start Restore Drill, 08: Lightweight Host & Container Health Monitoring
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## Acceptance Criteria
 
-- [ ] `docs/architecture.md` created: diagrams, trust boundaries, port mappings, secret lifecycle.
-- [ ] `docs/prerequisites.md` created: hardware, network, OS matrix (Debian 12/13, Ubuntu 22/24).
-- [ ] `docs/initial-server-setup.md` created: first-login runbook, SSH key verification, timezone.
-- [ ] `docs/security.md` created: SSH hardening, UFW firewall rules, fail2ban, secret storage rules.
-- [ ] `docs/coolify.md` created: installation walkthrough, Traefik setup, `APP_KEY` safety.
-- [ ] `docs/troubleshooting.md` created: diagnostics for SSH lockout, Docker container failures, rclone errors.
-- [ ] Root `README.md` updated with comprehensive overview, architecture, quickstart, and make targets.
-- [ ] `AGENTS.md` updated with coding guidelines while strictly preserving the `## Agent skills` section.
+- [x] `docs/architecture.md` created: diagrams, trust boundaries, port mappings, secret lifecycle.
+- [x] `docs/prerequisites.md` created: hardware, network, OS matrix (Debian 12/13, Ubuntu 22/24).
+- [x] `docs/initial-server-setup.md` created: first-login runbook, SSH key verification, timezone.
+- [x] `docs/security.md` created: SSH hardening, UFW firewall rules, fail2ban, secret storage rules.
+- [x] `docs/coolify.md` created: installation walkthrough, Traefik setup, `APP_KEY` safety.
+- [x] `docs/troubleshooting.md` created: diagnostics for SSH lockout, Docker container failures, rclone errors.
+- [x] Root `README.md` updated with comprehensive overview, architecture, quickstart, and make targets.
+- [x] `AGENTS.md` updated with coding guidelines while strictly preserving the `## Agent skills` section.
 
 ## Quality & Test Criteria (TDD Seam)
 
@@ -27,3 +27,6 @@
     - `make check` executes syntax checks on 100% of shell scripts without errors.
     - `make test` executes all test files across tickets 01 through 08 and confirms 100% pass rate.
     - `make help` prints clear operator documentation for available targets.
+
+## Resolution
+Created comprehensive operations documentation suite in `docs/` (`architecture.md`, `prerequisites.md`, `initial-server-setup.md`, `security.md`, `coolify.md`, `troubleshooting.md`), updated root `README.md` with complete architecture and Makefile command tables, updated `AGENTS.md` preserving the `## Agent skills` block, and verified full repository integrity and link resolution with 37 tests in `tests/test_docs_and_repo_integrity.sh`. Both `make check` and `make test` pass 100% green.
