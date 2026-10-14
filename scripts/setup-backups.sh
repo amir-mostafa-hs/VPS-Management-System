@@ -75,9 +75,11 @@ fi
 log_info "Creating secure backup staging directory..."
 mkdir -p -m 0700 /var/backups/vps
 
-log_info "Installing systemd units..."
-cp "${REPO_ROOT}/systemd/vps-backup.service" /etc/systemd/system/
+log_info "Installing systemd units with dynamic path substitution..."
+sed "s|/opt/vps-infrastructure|${REPO_ROOT}|g" "${REPO_ROOT}/systemd/vps-backup.service" > /etc/systemd/system/vps-backup.service
+chmod 0644 /etc/systemd/system/vps-backup.service
 cp "${REPO_ROOT}/systemd/vps-backup.timer" /etc/systemd/system/
+chmod 0644 /etc/systemd/system/vps-backup.timer
 
 if command -v systemctl >/dev/null 2>&1; then
     log_info "Reloading systemd daemon..."

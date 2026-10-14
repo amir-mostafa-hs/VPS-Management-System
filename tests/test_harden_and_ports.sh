@@ -52,6 +52,8 @@ assert_contains "ufw allow 443/tcp" "${dry_run_out}" "Dry-run plans allowing HTT
 assert_contains "ufw allow 8000/tcp" "${dry_run_out}" "Dry-run plans allowing Coolify UI (8000/tcp)"
 assert_contains "ufw allow 8080/tcp" "${dry_run_out}" "Dry-run plans allowing custom port 8080/tcp"
 assert_contains "ufw allow 53/udp" "${dry_run_out}" "Dry-run plans allowing custom port 53/udp"
+assert_contains "Verify active SSH session" "${dry_run_out}" "Dry-run plans active SSH session and key verification"
+assert_contains "sshd key-only authentication" "${dry_run_out}" "Dry-run plans sshd key-only configuration"
 
 finish_suite
 

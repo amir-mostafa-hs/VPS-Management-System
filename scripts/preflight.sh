@@ -12,6 +12,7 @@ OS_RELEASE_PATH="${OS_RELEASE_PATH:-/etc/os-release}"
 ARCH_OVERRIDE="${ARCH_OVERRIDE:-$(uname -m)}"
 CHECK_ONLY=false
 JSON_MODE=false
+DRY_RUN=false
 
 show_help() {
     cat << EOF
@@ -28,6 +29,7 @@ Supported Platforms:
 Options:
   --check-only    Perform compatibility assertions and exit (0=supported, 1=unsupported)
   --json          Output diagnostic report in JSON format
+  --dry-run       Acknowledge non-destructive dry-run mode (script is inherently read-only)
   -h, --help      Display this help message and exit
 
 EOF
@@ -44,17 +46,25 @@ while [[ $# -gt 0 ]]; do
             JSON_MODE=true
             shift
             ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
         -h|--help)
             show_help
             exit 0
             ;;
         *)
-            log_err "Unknown argument: $1"
+            log_error "Unknown argument: $1"
             show_help
             exit 1
             ;;
     esac
 done
+
+if [[ "${DRY_RUN}" == "true" ]]; then
+    log_info "[DRY-RUN] Preflight diagnostics is non-destructive and read-only."
+fi
 
 # Step 1: Detect and validate OS
 is_supported_os=false
@@ -90,23 +100,9 @@ case "${ARCH_OVERRIDE}" in
         ;;
 esac
 
-# Step 3: Gather hardware metrics (best-effort cross-platform)
-cpu_cores=1
-if command -v nproc >/dev/null 2>&1; then
-    cpu_cores=$(nproc)
-elif command -v sysctl >/dev/null 2>&1; then
-    cpu_cores=$(sysctl -n hw.ncpu 2>/dev/null || echo 1)
-fi
-
-total_ram_mb=0
-if [[ -f /proc/meminfo ]]; then
-    total_ram_kb=$(grep -E '^MemTotal:' /proc/meminfo | awk '{print $2}')
-    total_ram_mb=$((total_ram_kb / 1024))
-elif command -v sysctl >/dev/null 2>&1; then
-    ram_bytes=$(sysctl -n hw.memsize 2>/dev/null || echo 0)
-    total_ram_mb=$((ram_bytes / 1024 / 1024))
-fi
-
+# Step 3: Gather hardware metrics using common helpers
+cpu_cores=$(get_cpu_cores)
+total_ram_mb=$(get_total_ram_mb)
 disk_avail_human=$(df -h . | awk 'NR==2 {print $4}')
 
 # If JSON mode requested
@@ -144,15 +140,15 @@ printf "  %-22s : %s (%s)\n" "Operating System" "${os_name}" "${os_version}"
 if [[ "${is_supported_os}" == "true" ]]; then
     log_success "OS distribution is officially supported."
 else
-    log_err "OS distribution '${os_id} ${os_version}' is NOT in the supported matrix."
-    log_err "Supported OS: Ubuntu 22.04 LTS, Ubuntu 24.04 LTS, Debian 12, Debian 13."
+    log_error "OS distribution '${os_id} ${os_version}' is NOT in the supported matrix."
+    log_error "Supported OS: Ubuntu 22.04 LTS, Ubuntu 24.04 LTS, Debian 12, Debian 13."
 fi
 
 printf "  %-22s : %s\n" "CPU Architecture" "${ARCH_OVERRIDE}"
 if [[ "${is_supported_arch}" == "true" ]]; then
     log_success "Architecture is supported (x86_64 / ARM64)."
 else
-    log_err "Architecture '${ARCH_OVERRIDE}' is NOT supported."
+    log_error "Architecture '${ARCH_OVERRIDE}' is NOT supported."
 fi
 
 printf "  %-22s : %s cores\n" "CPU Cores" "${cpu_cores}"
@@ -167,6 +163,6 @@ if [[ "${is_supported_os}" == "true" && "${is_supported_arch}" == "true" ]]; the
     log_success "Preflight validation PASSED. Host is ready for bootstrapping."
     exit 0
 else
-    log_err "Preflight validation FAILED. Host does not meet platform requirements."
+    log_error "Preflight validation FAILED. Host does not meet platform requirements."
     exit 1
 fi

@@ -25,13 +25,13 @@ Key architectural principles:
 - **Unified Interface:** All operator tasks and quality gates must be exposed via `Makefile`.
 
 ### 2. Bash Scripting Standards
-All shell scripts under `scripts/` and `tests/` must adhere to these standards:
+All operational shell scripts under `scripts/` must adhere to these standards:
 - Always use `#!/usr/bin/env bash` with `set -euo pipefail`.
 - Always source `scripts/common.sh` for logging (`log_info`, `log_warn`, `log_error`, `log_success`).
 - Always support `--help` and `--dry-run` options.
 - The `--dry-run` flag must be completely non-destructive and executable without root privileges (the "dry-run seam" allows test suites to execute cleanly on local workstations and CI).
 - Quote all variables to prevent word splitting: `"${VAR}"`.
-- Ensure scripts pass `bash -n` syntax validation and `shellcheck` (where available).
+- Ensure all scripts under both `scripts/` and `tests/` pass `bash -n` syntax validation and `shellcheck` (where available).
 
 ### 3. Testing Standards (TDD)
 - All new features and scripts must have corresponding unit and contract tests in `tests/`.

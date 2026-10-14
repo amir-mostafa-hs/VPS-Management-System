@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive Persian operator guide (`docs/fa/README.md`) covering architecture, step-by-step VPS setup, automated builds, and disaster recovery.
 - "In Plain English" callouts and jargon glossaries across all English documentation.
 - Mandatory `CHANGELOG.md` logging rule added to `AGENTS.md` developer guidelines.
+- Remote archive listing in `scripts/restore-backup.sh` when `--archive` is omitted.
+- MD5/SHA1 checksum integrity verification (`rclone hashsum`) in `scripts/verify-backups.sh`.
+- Universal `--dry-run` flag support in `scripts/preflight.sh` and `scripts/health-check.sh`.
+- Shared hardware probing helpers (`get_total_ram_mb()`, `get_cpu_cores()`) in `scripts/common.sh`.
+
+### Fixed
+- GitHub Actions reusable Docker build (`.github/workflows/reusable-docker-build.yml`): Moved `COOLIFY_DEPLOY_WEBHOOK` secret to job-level `env` to fix step `if:` evaluation.
+- SSH lockout prevention (`scripts/harden-server.sh`): Added active SSH session and non-empty `authorized_keys` verification before enforcing key-only authentication.
+- Custom ports parsing (`scripts/harden-server.sh`): Fixed whitespace and inline description handling in `allowed_ports.conf`.
+- Systemd backup unit portability (`scripts/setup-backups.sh`): Dynamically substitutes repository root path instead of hardcoding `/opt/vps-infrastructure`.
 
 ### Changed
 - Reorganized `docs/` hierarchy into structured subdirectories:
@@ -64,3 +74,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SSH password authentication disabled.
 - Client-side AES-256 encryption (`rclone crypt`) before uploading backups off-site.
 - Automated zero-secrets scanning gate in `make check`.
+

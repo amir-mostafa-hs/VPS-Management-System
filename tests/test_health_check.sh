@@ -46,5 +46,10 @@ assert_contains "\"status\":" "${json_out}" "health-check --json contains status
 assert_contains "\"disk\":" "${json_out}" "health-check --json contains disk field"
 assert_contains "\"memory\":" "${json_out}" "health-check --json contains memory field"
 
+# Test 5: Dry-run mode
+dry_run_out=$(SIMULATED_DISK_PCT=50 SIMULATED_MEM_PCT=40 SKIP_DOCKER_CHECK=true bash "${REPO_ROOT}/scripts/health-check.sh" --dry-run 2>&1)
+assert_exit_code 0 $? "health-check.sh --dry-run exits with 0"
+assert_contains "[DRY-RUN]" "${dry_run_out}" "health-check.sh --dry-run reports dry-run mode"
+
 finish_suite
 

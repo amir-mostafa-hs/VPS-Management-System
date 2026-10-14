@@ -17,6 +17,8 @@ jobs:
     name: Build & Push Image
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
 
     steps:
       - name: Checkout Repository
@@ -55,9 +57,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Trigger Coolify Deployment Webhook
-        if: env.COOLIFY_DEPLOY_WEBHOOK != ''
-        env:
-          COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
+        if: ${{ env.COOLIFY_DEPLOY_WEBHOOK != '' }}
         run: |
           echo "Triggering Coolify deploy webhook..."
           curl -fsSL -X POST "${COOLIFY_DEPLOY_WEBHOOK}" || {

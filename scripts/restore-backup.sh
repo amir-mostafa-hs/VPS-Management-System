@@ -70,10 +70,17 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Safety Guardrail: Archive name is mandatory
+# Safety Guardrail & Interactive Discovery:
 if [[ -z "${ARCHIVE_NAME}" ]]; then
-    log_err "Missing mandatory argument: --archive <archive-name>"
-    log_info "Run 'make backup-verify' to see available remote backup archives."
+    log_warn "No backup archive specified."
+    log_info "Available remote archives in ${RCLONE_REMOTE}:"
+    if command -v rclone >/dev/null 2>&1; then
+        rclone lsf "${RCLONE_REMOTE}" 2>/dev/null | sed 's/^/  - /' || log_warn "Could not connect to ${RCLONE_REMOTE} to list archives."
+    else
+        log_warn "  (rclone is not installed; run 'make bootstrap' or install rclone to query remote)"
+    fi
+    log_error "Missing mandatory argument: --archive <archive-name>"
+    log_info "Usage: $(basename "$0") --archive <archive-name>"
     exit 1
 fi
 

@@ -26,10 +26,13 @@ Exit Codes:
 
 Options:
   --json          Output diagnostic report in parseable JSON
+  --dry-run       Acknowledge non-destructive dry-run mode (health check is read-only)
   -h, --help      Display this help message and exit
 
 EOF
 }
+
+DRY_RUN=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -37,17 +40,25 @@ while [[ $# -gt 0 ]]; do
             JSON_MODE=true
             shift
             ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
         -h|--help)
             show_help
             exit 0
             ;;
         *)
-            log_err "Unknown argument: $1"
+            log_error "Unknown argument: $1"
             show_help
             exit 1
             ;;
     esac
 done
+
+if [[ "${DRY_RUN}" == "true" ]]; then
+    log_info "[DRY-RUN] Health check is read-only. Evaluating system resources..."
+fi
 
 # Metric 1: Disk usage percentage
 disk_pct=0

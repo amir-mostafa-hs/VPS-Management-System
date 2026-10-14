@@ -62,6 +62,7 @@ A fully prepared, modular, and locally validated Git repository (`vps-infrastruc
 - Tier 1: Coolify core configuration, SQLite/PostgreSQL database, and environment files (`APP_KEY`).
 - Tier 2: Database native dumps (PostgreSQL via `pg_dump`, MySQL via `mysqldump`) and targeted Docker named volumes/bind mounts.
 - Off-site synchronization: `rclone sync` / `copy` using an encrypted remote (`rclone crypt`) pointing to Google Drive.
+- Checksum integrity verification: Non-destructive verification tool (`scripts/verify-backups.sh`) verifies remote archive existence and cryptographic checksums (MD5/SHA1).
 - Automation: Systemd service `vps-backup.service` triggered by `vps-backup.timer` with randomized daily execution.
 
 ### Zero-Secrets and Local Safety Posture
@@ -107,4 +108,4 @@ A ticket is marked complete **only** when:
 ## Further Notes
 
 - The project uses the local markdown issue tracker in `.scratch/vps-infrastructure/`.
-- All operational runbooks live in `docs/` and serve as operator-led reference manuals.
+- All operational runbooks live in `docs/` and serve as operator-led reference manuals, accompanied by a comprehensive Persian guide in `docs/fa/README.md`.

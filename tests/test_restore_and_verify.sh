@@ -28,8 +28,11 @@ assert_contains "Usage:" "${restore_help}" "restore-backup.sh --help displays us
 verify_dry_run=$(RCLONE_REMOTE="gdrive-crypt:vps-backups" bash "${REPO_ROOT}/scripts/verify-backups.sh" --dry-run 2>&1)
 assert_exit_code 0 $? "verify-backups.sh --dry-run exits with 0"
 assert_contains "rclone lsf" "${verify_dry_run}" "verify-backups plans non-destructive rclone lsf"
+assert_contains "checksum integrity" "${verify_dry_run}" "verify-backups plans checksum integrity verification"
 
-# Test 4: restore-backup.sh safety guardrail (fails without archive specified)
+# Test 4: restore-backup.sh safety guardrail (fails without archive specified but lists archives)
+missing_out=$(bash "${REPO_ROOT}/scripts/restore-backup.sh" 2>&1 || true)
+assert_contains "Available remote archives" "${missing_out}" "restore-backup displays available remote archives when --archive is omitted"
 if bash "${REPO_ROOT}/scripts/restore-backup.sh" >/dev/null 2>&1; then
     assert_eq 1 0 "restore-backup refuses execution without archive specified"
 else

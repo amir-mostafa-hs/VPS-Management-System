@@ -76,5 +76,10 @@ assert_contains "curl" "${bootstrap_dry_run}" "bootstrap.sh --dry-run plans inst
 assert_contains "ufw" "${bootstrap_dry_run}" "bootstrap.sh --dry-run plans installation of ufw"
 assert_contains "rclone" "${bootstrap_dry_run}" "bootstrap.sh --dry-run plans installation of rclone"
 
+# Test 6: Preflight --dry-run safety
+preflight_dry_run=$(OS_RELEASE_PATH="${MOCK_DIR}/os-release-ubuntu-24" ARCH_OVERRIDE="x86_64" bash "${REPO_ROOT}/scripts/preflight.sh" --dry-run 2>&1)
+assert_exit_code 0 $? "preflight.sh --dry-run exits with 0"
+assert_contains "[DRY-RUN]" "${preflight_dry_run}" "preflight.sh --dry-run reports dry-run mode"
+
 finish_suite
 

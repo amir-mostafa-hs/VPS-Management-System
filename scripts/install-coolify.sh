@@ -62,18 +62,12 @@ check_prereqs() {
     local ram_mb=0
     if [[ -n "${SIMULATED_RAM_MB:-}" ]]; then
         ram_mb="${SIMULATED_RAM_MB}"
-    elif [[ -f /proc/meminfo ]]; then
-        local ram_kb
-        ram_kb=$(grep -E '^MemTotal:' /proc/meminfo | awk '{print $2}')
-        ram_mb=$((ram_kb / 1024))
-    elif command -v sysctl >/dev/null 2>&1; then
-        local ram_bytes
-        ram_bytes=$(sysctl -n hw.memsize 2>/dev/null || echo 0)
-        ram_mb=$((ram_bytes / 1024 / 1024))
+    else
+        ram_mb=$(get_total_ram_mb)
     fi
 
     if [[ "${ram_mb}" -gt 0 && "${ram_mb}" -lt 1000 ]]; then
-        log_err "Host has only ${ram_mb} MB RAM. Coolify requires at least 1GB (2GB+ recommended)."
+        log_error "Host has only ${ram_mb} MB RAM. Coolify requires at least 1GB (2GB+ recommended)."
         return 1
     fi
     return 0

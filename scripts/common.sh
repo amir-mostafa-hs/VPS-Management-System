@@ -37,8 +37,12 @@ log_warn() {
     printf "${C_YELLOW}${C_BOLD}[WARN]${C_RESET} %s\n" "$*" >&2
 }
 
-log_err() {
+log_error() {
     printf "${C_RED}${C_BOLD}[ERROR]${C_RESET} %s\n" "$*" >&2
+}
+
+log_err() {
+    log_error "$@"
 }
 
 log_step() {
@@ -48,8 +52,8 @@ log_step() {
 # Privilege assertion
 require_root() {
     if [[ "${EUID}" -ne 0 ]]; then
-        log_err "This command requires administrative (root) privileges."
-        log_err "Please run again using: sudo $0 $*"
+        log_error "This command requires administrative (root) privileges."
+        log_error "Please run again using: sudo $0 $*"
         exit 1
     fi
 }
@@ -59,11 +63,38 @@ assert_cmd_exists() {
     local cmd="$1"
     local hint="${2:-Please install it before proceeding.}"
     if ! command -v "${cmd}" >/dev/null 2>&1; then
-        log_err "Required command '${cmd}' is not found in PATH."
-        log_err "${hint}"
+        log_error "Required command '${cmd}' is not found in PATH."
+        log_error "${hint}"
         return 1
     fi
     return 0
+}
+
+# Hardware probing helpers
+get_total_ram_mb() {
+    if [[ -f /proc/meminfo ]]; then
+        local ram_kb
+        ram_kb=$(grep -E '^MemTotal:' /proc/meminfo | awk '{print $2}')
+        echo "$((ram_kb / 1024))"
+    elif command -v sysctl >/dev/null 2>&1; then
+        local ram_bytes
+        ram_bytes=$(sysctl -n hw.memsize 2>/dev/null || echo "0")
+        echo "$((ram_bytes / 1024 / 1024))"
+    else
+        echo "0"
+    fi
+}
+
+get_cpu_cores() {
+    if command -v nproc >/dev/null 2>&1; then
+        nproc
+    elif command -v sysctl >/dev/null 2>&1; then
+        sysctl -n hw.ncpu 2>/dev/null || echo "1"
+    elif [[ -f /proc/cpuinfo ]]; then
+        grep -c '^processor' /proc/cpuinfo || echo "1"
+    else
+        echo "1"
+    fi
 }
 
 # Operator confirmation helper
@@ -96,8 +127,7 @@ confirm_action() {
 error_handler() {
     local exit_code="$1"
     local line_no="$2"
-    log_err "Script terminated with exit code ${exit_code} on line ${line_no}."
+    log_error "Script terminated with exit code ${exit_code} on line ${line_no}."
 }
 
 trap 'error_handler $? $LINENO' ERR
-
