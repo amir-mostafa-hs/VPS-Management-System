@@ -85,3 +85,4 @@ rclone size "${RCLONE_REMOTE}" 2>/dev/null || true
 
 latest_archive=$(echo "${archives}" | sort -r | head -n 1)
 log_success "Latest available backup: ${latest_archive}"
+

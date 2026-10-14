@@ -186,3 +186,4 @@ log_info "Enforcing remote retention (${REMOTE_RETENTION_DAYS} days)..."
 rclone delete --min-age "${REMOTE_RETENTION_DAYS}d" "${RCLONE_REMOTE}" 2>/dev/null || true
 
 log_success "Backup ${ARCHIVE_NAME} completed and synced successfully."
+

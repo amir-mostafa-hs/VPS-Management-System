@@ -84,7 +84,7 @@ if [[ "${DRY_RUN}" == "true" ]]; then
     printf "  1. Download: rclone copy %s/%s %s/\n" "${RCLONE_REMOTE}" "${ARCHIVE_NAME}" "${TARGET_DIR}"
     printf "  2. Extract archive: tar -xzf %s/%s -C %s/\n" "${TARGET_DIR}" "${ARCHIVE_NAME}" "${TARGET_DIR}"
     printf "  3. Staged contents ready for operator review in %s/\n" "${TARGET_DIR}"
-    printf "  4. Follow 'docs/restore-and-disaster-recovery.md' for DB restoration.\n"
+    printf "  4. Follow 'docs/backup-recovery/restore-and-disaster-recovery.md' for DB restoration.\n"
     log_success "[DRY-RUN] Restore plan validated successfully."
     exit 0
 fi
@@ -114,8 +114,9 @@ log_success "Backup archive downloaded and extracted to: ${TARGET_DIR}"
 printf "\n${C_BOLD}${C_GREEN}Extracted Artifacts:${C_RESET}\n"
 find "${TARGET_DIR}" -maxdepth 2 | sed 's/^/  - /'
 
-printf "\n${C_BOLD}Next Steps (Refer to docs/restore-and-disaster-recovery.md):${C_RESET}\n"
+printf "\n${C_BOLD}Next Steps (Refer to docs/backup-recovery/restore-and-disaster-recovery.md):${C_RESET}\n"
 printf "  1. Review extracted SQL dumps and Coolify core state.\n"
 printf "  2. Verify APP_KEY: grep '^APP_KEY=' %s/*/coolify-core.tar.gz (or extracted files)\n" "${TARGET_DIR}"
 printf "  3. Import databases into target containers via docker exec.\n"
 printf "  4. Restart services and verify health checks.\n\n"
+

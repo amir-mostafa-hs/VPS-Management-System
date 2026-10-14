@@ -40,6 +40,10 @@ All shell scripts under `scripts/` and `tests/` must adhere to these standards:
 - Every test must pass cleanly via `make test` and `make check`.
 
 ### 4. Documentation Standards
-- Keep documentation up to date under `docs/`.
+- Keep documentation organized under `docs/` subdirectories (`getting-started/`, `architecture/`, `platform/`, `backup-recovery/`, `operations/`, `specs/`, `fa/`).
 - Ensure all internal Markdown links use relative paths and resolve to valid files.
 - Run `tests/test_docs_and_repo_integrity.sh` to verify documentation completeness and link integrity.
+
+### 5. Changelog Protocol
+- Whenever any decision is implemented, architectural modification is made, or feature/fix is added, developers and agents MUST record a concise summary in `CHANGELOG.md` under `[Unreleased]` or the corresponding version header.
+- Maintain format according to the [Keep a Changelog](https://keepachangelog.com/) standard (`Added`, `Changed`, `Fixed`, `Security`).

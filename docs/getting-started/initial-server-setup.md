@@ -2,6 +2,11 @@
 
 This step-by-step guide walks you through connecting to a newly provisioned Linux VPS, provisioning a dedicated non-root operator user, configuring timezone and locale, and executing automated preflight diagnostics.
 
+> [!NOTE]
+> **In Plain English:**  
+> When you first buy a server, you are handed the master key (`root`). Running daily commands as `root` is dangerous—a single accidental typo like `rm -rf /` can erase your entire server in a second.  
+> Here, we create a dedicated manager account (`deployer`), copy your secure SSH key to it, verify you can log in, and ensure your server's clock is synced to UTC so backup schedules and logs match worldwide.
+
 ---
 
 ## 1. Initial Connection as Root
@@ -18,7 +23,7 @@ If you receive a host key verification warning, verify the fingerprint and accep
 
 ## 2. Create Dedicated Operator User
 
-Never operate daily tasks directly as `root`. Create a dedicated administrative user (for example `deployer` or `admin`):
+Never operate daily tasks directly as `root`. Create a dedicated administrative user (for example `deployer`):
 
 ```bash
 # 1. Create the user with home directory and bash shell
@@ -124,5 +129,5 @@ make bootstrap
 ## 8. Next Steps
 
 With basic dependencies bootstrapped:
-- Proceed to [docs/security.md](security.md) to apply SSH hardening, firewall rules, and intrusion protection.
-- Then install Docker and Coolify using [docs/coolify.md](coolify.md).
+- Proceed to [docs/architecture/security.md](../architecture/security.md) to apply SSH hardening, firewall rules, and intrusion protection.
+- Then install Docker and Coolify using [docs/platform/coolify.md](../platform/coolify.md).

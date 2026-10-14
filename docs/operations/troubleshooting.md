@@ -2,6 +2,13 @@
 
 This runbook provides actionable diagnostics and recovery steps for common operational emergencies, including SSH lockouts, Coolify crashes, Docker daemon issues, disk exhaustion, and backup failures.
 
+> [!NOTE]
+> **In Plain English:**  
+> When something goes wrong on a server, do not panic. 99% of emergencies fall into three categories:  
+> 1. You locked yourself out (use your hosting provider's web emergency console to unblock port 22 or unban your IP in fail2ban).  
+> 2. The disk is 100% full (clean Docker dangling caches and vacuum systemd logs).  
+> 3. Coolify is stuck (restart the Coolify stack with docker compose).
+
 ---
 
 ## 1. Emergency SSH Lockout Recovery
@@ -158,4 +165,4 @@ If `make backup-now` or the daily systemd timer fails:
    ```bash
    ls -la /var/backups/vps-snapshots/
    ```
-   For step-by-step restoration instructions, refer to [docs/restore-and-disaster-recovery.md](restore-and-disaster-recovery.md).
+   For step-by-step restoration instructions, refer to [docs/backup-recovery/restore-and-disaster-recovery.md](../backup-recovery/restore-and-disaster-recovery.md).

@@ -15,7 +15,7 @@ assert_file_exists "${REPO_ROOT}/scripts/verify-backups.sh" "scripts/verify-back
 assert_file_executable "${REPO_ROOT}/scripts/verify-backups.sh" "scripts/verify-backups.sh is executable"
 assert_file_exists "${REPO_ROOT}/scripts/restore-backup.sh" "scripts/restore-backup.sh exists"
 assert_file_executable "${REPO_ROOT}/scripts/restore-backup.sh" "scripts/restore-backup.sh is executable"
-assert_file_exists "${REPO_ROOT}/docs/restore-and-disaster-recovery.md" "docs/restore-and-disaster-recovery.md exists"
+assert_file_exists "${REPO_ROOT}/docs/backup-recovery/restore-and-disaster-recovery.md" "docs/backup-recovery/restore-and-disaster-recovery.md exists"
 
 # Test 2: CLI --help contracts
 verify_help=$(bash "${REPO_ROOT}/scripts/verify-backups.sh" --help 2>&1 || true)
@@ -43,9 +43,10 @@ assert_contains "vps-backup-20261014_030000.tar.gz" "${restore_dry_run}" "restor
 assert_contains "Extract" "${restore_dry_run}" "restore-backup plans extraction"
 
 # Test 6: Disaster recovery runbook verification
-dr_doc=$(cat "${REPO_ROOT}/docs/restore-and-disaster-recovery.md")
+dr_doc=$(cat "${REPO_ROOT}/docs/backup-recovery/restore-and-disaster-recovery.md")
 assert_contains "Clean VPS" "${dr_doc}" "Documentation covers clean VPS recovery drill"
 assert_contains "APP_KEY" "${dr_doc}" "Documentation specifies APP_KEY restoration"
 assert_contains "pg_restore" "${dr_doc}" "Documentation explains database restoration"
 
 finish_suite
+

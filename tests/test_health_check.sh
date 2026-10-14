@@ -13,7 +13,7 @@ suite_header "Lightweight Host and Container Health Monitoring"
 # Test 1: Files exist
 assert_file_exists "${REPO_ROOT}/scripts/health-check.sh" "scripts/health-check.sh exists"
 assert_file_executable "${REPO_ROOT}/scripts/health-check.sh" "scripts/health-check.sh is executable"
-assert_file_exists "${REPO_ROOT}/docs/monitoring.md" "docs/monitoring.md exists"
+assert_file_exists "${REPO_ROOT}/docs/operations/monitoring.md" "docs/operations/monitoring.md exists"
 assert_file_exists "${REPO_ROOT}/monitoring/README.md" "monitoring/README.md exists"
 
 # Test 2: CLI --help contract
@@ -47,3 +47,4 @@ assert_contains "\"disk\":" "${json_out}" "health-check --json contains disk fie
 assert_contains "\"memory\":" "${json_out}" "health-check --json contains memory field"
 
 finish_suite
+

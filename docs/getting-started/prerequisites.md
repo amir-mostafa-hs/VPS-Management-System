@@ -2,6 +2,14 @@
 
 This document outlines the hardware specifications, network and DNS setup, supported operating systems, and workstation tools required prior to provisioning the VPS.
 
+> [!NOTE]
+> **In Plain English:**  
+> Before running setup commands, you need four simple ingredients:  
+> 1. A virtual server running Debian or Ubuntu with at least 2GB of RAM.  
+> 2. A domain name (e.g. `example.com`) where you can create `A` records pointing to your server's IP.  
+> 3. An SSH key on your personal computer to securely log in without passwords.  
+> 4. Free GitHub and Google Drive accounts to handle automated builds and offsite backups.
+
 ---
 
 ## 1. Operating System Support Matrix
@@ -33,7 +41,8 @@ Because container image builds are 100% offloaded to GitHub Actions, the VPS onl
 | **Virtualization** | KVM, Proxmox, or Cloud VPS (Hetzner, DigitalOcean, Linode, AWS EC2, etc.) | Standard KVM / Dedicated instance |
 
 > [!WARNING]
-> OpenVZ or LXC containers without Docker nesting enabled are **not recommended**. Full KVM virtualization is required for Docker iptables and networking support.
+> **Why KVM and not OpenVZ or shared containers?**  
+> OpenVZ or shared containers share the host machine's Linux kernel and do not allow full Docker network routing (`iptables` and bridge manipulation). Full KVM virtualization gives your VPS its own independent kernel, allowing Docker and Traefik to run without restrictions.
 
 ---
 
@@ -46,14 +55,15 @@ Because container image builds are 100% offloaded to GitHub Actions, the VPS onl
 2. **DNS Records (at your domain registrar or Cloudflare):**
    Prior to setting up Coolify and SSL certificates, configure the following DNS records pointing to your VPS public IP:
 
-   | Record Type | Host / Name | Value / Target | Purpose |
+   | Record Type | Host / Name | Value / Target | Plain-English Purpose |
    |---|---|---|---|
-   | `A` | `coolify.example.com` | `<VPS_PUBLIC_IP>` | Coolify management dashboard |
-   | `A` | `*.example.com` (Wildcard) | `<VPS_PUBLIC_IP>` | Automated subdomains for deployed apps |
-   | `A` | `example.com` (Apex) | `<VPS_PUBLIC_IP>` | (Optional) Primary apex domain |
+   | `A` | `coolify.example.com` | `<VPS_PUBLIC_IP>` | Coolify management dashboard URL |
+   | `A` | `*.example.com` (Wildcard) | `<VPS_PUBLIC_IP>` | Automatically points any subdomains (e.g. `api.example.com`, `app.example.com`) to your server without needing new DNS entries each time |
+   | `A` | `example.com` (Apex) | `<VPS_PUBLIC_IP>` | (Optional) Primary root domain |
 
 > [!TIP]
-> If using Cloudflare, start with **DNS only (Gray Cloud)** during initial Let's Encrypt certificate issuance so ACME HTTP-01 challenges resolve directly to Traefik without proxy interference.
+> **Cloudflare Users Note:**  
+> Start with **DNS only (Gray Cloud)** during initial Let's Encrypt certificate issuance. If Cloudflare's orange cloud (proxy) is enabled initially, Let's Encrypt cannot verify the ACME challenge directly on Traefik, which causes SSL issuance to fail.
 
 ---
 
@@ -69,7 +79,7 @@ Because container image builds are 100% offloaded to GitHub Actions, the VPS onl
 3. **GitHub Account & Repository:**
    - Permissions to create repository secrets and push images to GitHub Packages / Container Registry (`ghcr.io`).
 4. **Google Account (for Remote Backups):**
-   - Access to Google Drive and Google Cloud Console to create an OAuth Client ID for `rclone` (see [docs/google-drive.md](google-drive.md)).
+   - Access to Google Drive and Google Cloud Console to create an OAuth Client ID for `rclone` (see [docs/backup-recovery/google-drive.md](../backup-recovery/google-drive.md)).
 
 ---
 
@@ -88,4 +98,4 @@ Ensure the following tools are installed on your local computer or operator term
 ## 6. Next Steps
 
 Once the VPS is launched and DNS records are configured:
-- Proceed to [docs/initial-server-setup.md](initial-server-setup.md) to perform the initial login, configure the operator user, and run preflight checks.
+- Proceed to [docs/getting-started/initial-server-setup.md](initial-server-setup.md) to perform the initial login, configure the operator user, and run preflight checks.

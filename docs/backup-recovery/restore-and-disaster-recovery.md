@@ -1,8 +1,15 @@
 # Cold-Start Disaster Recovery Runbook & Restore Drill
 
-## Overview
-
 This runbook documents the exact sequence for recovering all services, configurations, and application data onto a **Clean VPS** in the event of catastrophic server loss or migration.
+
+> [!NOTE]
+> **In Plain English:**  
+> A disaster recovery plan is like a fire drill. Don't wait until your server actually crashes to figure out how to restore your data!  
+> Follow this guide to simulate a "cold-start" recovery: renting a brand-new blank server, typing 5 commands, pulling your encrypted backup from Google Drive, and having all your websites and databases running again in 20 minutes.
+
+---
+
+## 1. Overview & Recovery Flow
 
 ```
 [ Catastrophic Event ]
@@ -28,7 +35,7 @@ This runbook documents the exact sequence for recovering all services, configura
 
 ---
 
-## Prerequisites for Recovery
+## 2. Prerequisites for Recovery
 
 Ensure you have stored these two critical items in an offline password manager beforehand:
 1. **Coolify `APP_KEY`** (string from `/data/coolify/source/.env`).
@@ -36,7 +43,7 @@ Ensure you have stored these two critical items in an offline password manager b
 
 ---
 
-## Phase 1: Clean VPS Provisioning
+## 3. Phase 1: Clean VPS Provisioning
 
 1. Provision a fresh virtual server running a supported operating system (Ubuntu 24.04 LTS recommended).
 2. SSH into the new server using your operator key:
@@ -57,7 +64,7 @@ Ensure you have stored these two critical items in an offline password manager b
 
 ---
 
-## Phase 2: Installing Base Services
+## 4. Phase 2: Installing Base Services
 
 Install Docker Engine CE and Coolify:
 ```bash
@@ -72,9 +79,9 @@ docker stop coolify coolify-db coolify-proxy 2>/dev/null || true
 
 ---
 
-## Phase 3: Configuring Rclone Crypt
+## 5. Phase 3: Configuring Rclone Crypt
 
-1. Set up the Google Drive remote and the encrypted crypt overlay following `docs/google-drive.md`:
+1. Set up the Google Drive remote and the encrypted crypt overlay following [docs/backup-recovery/google-drive.md](google-drive.md):
    ```bash
    rclone config
    ```
@@ -85,7 +92,7 @@ docker stop coolify coolify-db coolify-proxy 2>/dev/null || true
 
 ---
 
-## Phase 4: Restoring Backups
+## 6. Phase 4: Restoring Backups
 
 1. Launch the interactive restore tool to extract your chosen archive:
    ```bash
@@ -116,7 +123,7 @@ docker stop coolify coolify-db coolify-proxy 2>/dev/null || true
 
 ---
 
-## Phase 5: Verification & Resumption
+## 7. Phase 5: Verification & Resumption
 
 1. Restart Coolify core containers:
    ```bash
@@ -129,3 +136,10 @@ docker stop coolify coolify-db coolify-proxy 2>/dev/null || true
    ```bash
    make health
    ```
+
+---
+
+## 8. Next Steps & Cross-References
+
+- Back to main backup guide: [docs/backup-recovery/backups.md](backups.md).
+- Troubleshooting common restore issues: [docs/operations/troubleshooting.md](../operations/troubleshooting.md).

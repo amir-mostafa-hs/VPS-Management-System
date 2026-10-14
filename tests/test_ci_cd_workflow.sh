@@ -11,11 +11,11 @@ source "${REPO_ROOT}/tests/test_runner.sh"
 suite_header "GitHub Actions CI/CD Pipeline & GHCR Integration"
 
 WORKFLOW_FILE="${REPO_ROOT}/.github/workflows/reusable-docker-build.yml"
-DOC_FILE="${REPO_ROOT}/docs/github-actions-ghcr.md"
+DOC_FILE="${REPO_ROOT}/docs/platform/github-actions-ghcr.md"
 
 # Test 1: Files exist
 assert_file_exists "${WORKFLOW_FILE}" ".github/workflows/reusable-docker-build.yml exists"
-assert_file_exists "${DOC_FILE}" "docs/github-actions-ghcr.md exists"
+assert_file_exists "${DOC_FILE}" "docs/platform/github-actions-ghcr.md exists"
 
 # Test 2: Workflow content checks
 wf_content=$(cat "${WORKFLOW_FILE}" 2>/dev/null || echo "")
@@ -42,3 +42,4 @@ assert_contains "Deploy Webhook" "${doc_content}" "Documentation explains Coolif
 assert_contains "Rollback" "${doc_content}" "Documentation details rollback procedure to prior commit SHA"
 
 finish_suite
+

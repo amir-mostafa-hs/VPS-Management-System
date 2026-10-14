@@ -50,3 +50,4 @@ assert_exit_code 0 $? "setup-backups.sh --dry-run exits with 0"
 assert_contains "systemctl enable --now vps-backup.timer" "${setup_dry_run}" "setup-backups plans enabling systemd timer"
 
 finish_suite
+

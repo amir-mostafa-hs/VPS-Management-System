@@ -20,3 +20,4 @@ The repository favors a **lightweight, native host monitoring** approach rather 
 
 - **Docker Log Rotation:** Enforced at `/etc/docker/daemon.json` (`max-size: 10m`, `max-file: 3`) to prevent unconstrained log disk filling.
 - **Journalctl Log Vacuuming:** Systemd journal logs can be cleaned using `journalctl --vacuum-time=14d`.
+

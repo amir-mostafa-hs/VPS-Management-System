@@ -25,3 +25,4 @@ while IFS= read -r script_file; do
 done < <(find "${REPO_ROOT}/scripts" "${REPO_ROOT}/tests" -name "*.sh" -type f 2>/dev/null | sort)
 
 finish_suite
+

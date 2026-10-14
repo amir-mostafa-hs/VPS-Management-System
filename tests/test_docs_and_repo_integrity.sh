@@ -13,21 +13,25 @@ source "${REPO_ROOT}/tests/test_runner.sh"
 
 suite_header "Documentation and Repository Integrity"
 
-# 1. Required documentation suite existence and substance
+# 1. Required categorized documentation suite existence and substance
 DOC_FILES=(
-  "docs/architecture.md"
-  "docs/prerequisites.md"
-  "docs/initial-server-setup.md"
-  "docs/security.md"
-  "docs/coolify.md"
-  "docs/troubleshooting.md"
-  "docs/github-actions-ghcr.md"
-  "docs/backups.md"
-  "docs/google-drive.md"
-  "docs/restore-and-disaster-recovery.md"
-  "docs/monitoring.md"
+  "docs/architecture/architecture.md"
+  "docs/architecture/security.md"
+  "docs/getting-started/prerequisites.md"
+  "docs/getting-started/initial-server-setup.md"
+  "docs/platform/coolify.md"
+  "docs/platform/github-actions-ghcr.md"
+  "docs/backup-recovery/backups.md"
+  "docs/backup-recovery/google-drive.md"
+  "docs/backup-recovery/restore-and-disaster-recovery.md"
+  "docs/operations/monitoring.md"
+  "docs/operations/troubleshooting.md"
+  "docs/specs/PROJECT_BRIEF.md"
+  "docs/specs/ANTIGRAVITY_PROMPT.md"
+  "docs/fa/README.md"
   "README.md"
   "AGENTS.md"
+  "CHANGELOG.md"
 )
 
 for doc in "${DOC_FILES[@]}"; do
@@ -56,9 +60,11 @@ if [[ -f "$README_FILE" ]]; then
   assert_contains "make preflight" "$readme_content" "README.md documents make preflight"
   assert_contains "make bootstrap" "$readme_content" "README.md documents make bootstrap"
   assert_contains "make harden" "$readme_content" "README.md documents make harden"
+  assert_contains "Persian Documentation" "$readme_content" "README.md links to Persian guide"
+  assert_contains "CHANGELOG.md" "$readme_content" "README.md links to CHANGELOG.md"
 fi
 
-# 3. AGENTS.md preserved structure
+# 3. AGENTS.md preserved structure & Changelog rule
 AGENTS_FILE="${REPO_ROOT}/AGENTS.md"
 if [[ -f "$AGENTS_FILE" ]]; then
   agents_content=$(cat "$AGENTS_FILE")
@@ -66,9 +72,19 @@ if [[ -f "$AGENTS_FILE" ]]; then
   assert_contains "Issue tracker" "$agents_content" "AGENTS.md preserves Issue tracker description"
   assert_contains "Triage labels" "$agents_content" "AGENTS.md preserves Triage labels description"
   assert_contains "Domain docs" "$agents_content" "AGENTS.md preserves Domain docs description"
+  assert_contains "Changelog Protocol" "$agents_content" "AGENTS.md includes Changelog Protocol rule"
 fi
 
-# 4. Markdown link verification (checks local relative file links in docs/)
+# 4. CHANGELOG.md format checks
+CHANGELOG_FILE="${REPO_ROOT}/CHANGELOG.md"
+if [[ -f "$CHANGELOG_FILE" ]]; then
+  changelog_content=$(cat "$CHANGELOG_FILE")
+  assert_contains "Keep a Changelog" "$changelog_content" "CHANGELOG.md references Keep a Changelog standard"
+  assert_contains "[1.0.0]" "$changelog_content" "CHANGELOG.md contains [1.0.0] release"
+  assert_contains "[Unreleased]" "$changelog_content" "CHANGELOG.md contains [Unreleased] section"
+fi
+
+# 5. Markdown link verification (checks local relative file links in docs/ and README.md)
 broken_links=0
 tested_links=0
 while IFS= read -r md_file; do
@@ -91,7 +107,7 @@ while IFS= read -r md_file; do
       broken_links=$((broken_links + 1))
     fi
   done < <(grep -o -E '\[[^]]+\]\([^)]+\)' "$md_file" | sed -E 's/.*\]\(([^)]+)\)/\1/' | grep -v -E '^(http|https|mailto:|#|file:)' || true)
-done < <(find "${REPO_ROOT}/docs" -maxdepth 2 -name "*.md")
+done < <(find "${REPO_ROOT}/docs" -name "*.md"; echo "${REPO_ROOT}/README.md")
 
 TOTAL_TESTS=$((TOTAL_TESTS + 1))
 if [[ "$broken_links" -eq 0 && "$tested_links" -gt 0 ]]; then

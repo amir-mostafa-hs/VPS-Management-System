@@ -54,3 +54,4 @@ assert_contains "ufw allow 8080/tcp" "${dry_run_out}" "Dry-run plans allowing cu
 assert_contains "ufw allow 53/udp" "${dry_run_out}" "Dry-run plans allowing custom port 53/udp"
 
 finish_suite
+

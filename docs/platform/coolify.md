@@ -2,6 +2,10 @@
 
 This guide walks you through deploying Docker Engine CE and Coolify v4, securing the critical `APP_KEY`, accessing the web dashboard, configuring custom domains with Traefik SSL, and connecting GitHub Container Registry (GHCR) for offloaded CI/CD deployments.
 
+> [!NOTE]
+> **In Plain English:**  
+> Coolify gives you a clean web control panel (similar to Heroku, Vercel, or Netlify) directly on your own private VPS. It manages domains, SSL certificates, environment variables, databases, and container restarts with a few clicks.
+
 ---
 
 ## 1. Automated Installation
@@ -33,9 +37,10 @@ The script pulls and boots the official Coolify stack into `/data/coolify`.
 ## 2. CRITICAL: Back Up Your `APP_KEY` Immediately
 
 > [!CAUTION]
-> Coolify encrypts all database passwords, deployment secrets, SSH keys, and webhook tokens using the `APP_KEY` found in `/data/coolify/source/.env`.
+> **What is `APP_KEY` and why is it so important?**  
+> Coolify stores all your application database passwords, secrets, and private deploy tokens in its internal database. To keep them safe, it encrypts all of them using a master key called `APP_KEY` located in `/data/coolify/source/.env`.  
 > 
-> **If you lose `APP_KEY`, your Coolify database and application credentials CANNOT be decrypted or recovered!**
+> **If you lose `APP_KEY`, your Coolify database and application credentials CANNOT be decrypted or recovered!** Even if you have a full backup of the database, without this key, the data is unreadable random garbage.
 
 ### Retrieve and save your `APP_KEY`:
 ```bash
@@ -108,3 +113,10 @@ Because images are built off-server in GitHub Actions runners and pushed to GHCR
   ```
 - **Update Coolify:**
   Updates can be triggered directly from the Coolify web interface under **Settings** > **Update**, or by pulling the latest compose stack in `/data/coolify/source`.
+
+---
+
+## 7. Next Steps
+
+- Set up automated CI/CD builds with [docs/platform/github-actions-ghcr.md](github-actions-ghcr.md).
+- Configure automated offsite backups with [docs/backup-recovery/backups.md](../backup-recovery/backups.md).

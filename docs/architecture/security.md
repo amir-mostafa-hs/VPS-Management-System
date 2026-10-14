@@ -2,6 +2,14 @@
 
 This runbook covers host hardening, SSH configuration, the UFW firewall baseline, custom port extension via `config/allowed_ports.conf`, fail2ban intrusion prevention, unattended security upgrades, and strict secrets management policies.
 
+> [!NOTE]
+> **In Plain English:**  
+> Securing a VPS is like locking down a house:  
+> 1. We replace easily pickable password locks on the front door with high-security biometric keys (SSH keys only).  
+> 2. We brick up every unused window and doorway (UFW default-deny firewall).  
+> 3. We hire a guard who spots anyone repeatedly trying to pick the lock and throws them in detention for an hour (fail2ban).  
+> 4. We make sure internal workrooms don't accidentally knock open secret back doors to the public street (Docker vs. UFW port binding discipline).
+
 ---
 
 ## 1. Automated Security Hardening (`make harden`)
@@ -22,9 +30,13 @@ make harden
 
 ## 2. SSH Daemon Hardening
 
+> [!TIP]
+> **Why disable passwords?**  
+> Public IP addresses on the internet receive thousands of automated password guesses per hour from botnets. By disabling password authentication entirely and requiring an Ed25519 cryptographic key, brute-force password guessing becomes mathematically impossible.
+
 The SSH daemon configuration (`/etc/ssh/sshd_config.d/99-vps-hardening.conf` or `/etc/ssh/sshd_config`) enforces strict authentication policies:
 
-| Directive | Configured Value | Security Purpose |
+| Directive | Configured Value | Security Purpose & Meaning |
 |---|---|---|
 | `PasswordAuthentication` | `no` | Prevents credential brute-forcing; requires public key authentication. |
 | `PermitRootLogin` | `prohibit-password` | Prevents remote root password attacks. Key access can be allowed or disabled. |
@@ -39,11 +51,11 @@ The SSH daemon configuration (`/etc/ssh/sshd_config.d/99-vps-hardening.conf` or 
 
 ## 3. UFW Firewall Baseline & Custom Ports
 
-The firewall is configured with a **Default Deny Incoming** posture.
+The firewall is configured with a **Default Deny Incoming** posture. Any packet arriving at the server that does not match an explicitly allowed rule is silently dropped.
 
 ### Baseline Allowed Ports
-- `22/tcp` — SSH access
-- `80/tcp` — HTTP (Traefik web ingress & ACME challenges)
+- `22/tcp` — SSH management access
+- `80/tcp` — HTTP (Traefik web ingress & ACME Let's Encrypt challenges)
 - `443/tcp` — HTTPS (Traefik TLS encrypted traffic)
 - `8000/tcp` — Coolify control panel UI
 
@@ -64,14 +76,16 @@ Running `make harden` automatically parses `config/allowed_ports.conf` and adds 
 
 ## 4. Docker vs. UFW Security Considerations
 
-By default, Docker manipulates Linux `iptables` directly. When you publish a port with `docker run -p 8080:80` or `ports: - "8080:80"` in docker compose, Docker inserts NAT rules **before** UFW chains, potentially exposing a container port to the internet even if UFW blocks it.
+> [!IMPORTANT]
+> **The Docker iptables Gotcha Explained Simply:**  
+> By default in Linux, Docker manipulates firewall rules (`iptables`) directly. When you publish a port in Docker like `ports: - "5432:5432"`, Docker injects a routing rule *before* UFW evaluates traffic. This means Docker can bypass UFW and expose your database container directly to the internet!
 
 ### Defense-in-Depth Best Practices:
 1. **Bind to Localhost for Internal Services:**
    In Docker Compose or Coolify, always bind internal services to `127.0.0.1`:
    ```yaml
    ports:
-     - "127.0.0.1:5432:5432"  # PostgreSQL accessible only to host/local
+     - "127.0.0.1:5432:5432"  # PostgreSQL accessible ONLY from this host, not from the public internet
    ```
 2. **Route Public Traffic Through Traefik:**
    Do not expose application containers directly. Attach them to the `coolify` Docker network and let Traefik handle reverse proxying on ports 80/443.
@@ -82,12 +96,12 @@ By default, Docker manipulates Linux `iptables` directly. When you publish a por
 
 ## 5. Fail2ban Intrusion Prevention
 
-Fail2ban monitors system authentication logs and automatically blacklists IP addresses exhibiting malicious behavior.
+Fail2ban monitors system authentication logs (`/var/log/auth.log`) and automatically blacklists IP addresses exhibiting malicious behavior.
 
 - Configuration file: `/etc/fail2ban/jail.local`
 - Jail: `[sshd]`
 - `maxretry = 3` (bans after 3 failed authentication attempts)
-- `findtime = 600` (window of 10 minutes)
+- `findtime = 600` (within a window of 10 minutes)
 - `bantime = 3600` (1 hour initial ban time)
 
 Useful commands:
@@ -95,7 +109,7 @@ Useful commands:
 # Check jail status and banned IPs
 sudo fail2ban-client status sshd
 
-# Unban an accidental lockout
+# Unban an accidental lockout (e.g. if you misconfigured your client)
 sudo fail2ban-client set sshd unbanip <IP_ADDRESS>
 ```
 
@@ -103,7 +117,7 @@ sudo fail2ban-client set sshd unbanip <IP_ADDRESS>
 
 ## 6. Unattended Security Upgrades
 
-To ensure the Linux kernel and core libraries receive critical CVE security patches:
+To ensure the Linux kernel and core packages automatically receive critical CVE security patches without requiring manual intervention:
 
 ```bash
 sudo apt-get install -y unattended-upgrades
@@ -115,6 +129,10 @@ Configured in `/etc/apt/apt.conf.d/50unattended-upgrades` to automatically insta
 ---
 
 ## 7. Secrets Management & Hygiene Rules
+
+> [!TIP]
+> **What does permission `0600` mean?**  
+> `chmod 600 <file>` means "Read and write for the owner only; completely forbidden for everyone else on the machine." This prevents other users or background processes from reading sensitive tokens.
 
 1. **Zero Secrets in Version Control:**
    - Never commit `.env` files, API keys, private certificates, or tokens.
@@ -130,4 +148,4 @@ Configured in `/etc/apt/apt.conf.d/50unattended-upgrades` to automatically insta
 
 ## 8. Next Steps
 
-- Now that the server is secured, proceed to [docs/coolify.md](coolify.md) to set up Docker Engine CE and Coolify.
+- Now that the server is secured, proceed to [docs/platform/coolify.md](../platform/coolify.md) to set up Docker Engine CE and Coolify.

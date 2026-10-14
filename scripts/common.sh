@@ -100,3 +100,4 @@ error_handler() {
 }
 
 trap 'error_handler $? $LINENO' ERR
+

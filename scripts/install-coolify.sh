@@ -133,3 +133,4 @@ printf "  2. Complete the initial root admin user registration.\n"
 printf "  3. IMPORTANT: Back up the Coolify encryption key immediately:\n"
 printf "     grep '^APP_KEY=' /data/coolify/source/.env\n"
 printf "     Store this APP_KEY in an encrypted offline password manager.\n\n"
+

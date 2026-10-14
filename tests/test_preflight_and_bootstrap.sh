@@ -77,3 +77,4 @@ assert_contains "ufw" "${bootstrap_dry_run}" "bootstrap.sh --dry-run plans insta
 assert_contains "rclone" "${bootstrap_dry_run}" "bootstrap.sh --dry-run plans installation of rclone"
 
 finish_suite
+

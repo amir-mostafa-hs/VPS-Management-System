@@ -35,3 +35,4 @@ fi
 assert_eq 0 "${hardcoded_passwords_found}" "No hardcoded secrets or credentials in scripts"
 
 finish_suite
+

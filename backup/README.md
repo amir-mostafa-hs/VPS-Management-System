@@ -19,3 +19,4 @@ This directory defines the standards, structure, and retention rules for the aut
 - Backups are compressed with `gzip` and encrypted locally using an `rclone crypt` remote before upload to Google Drive.
 - The crypt remote encrypts both file contents and filenames.
 - Retention is enforced locally (default 7 days) and remotely (default 30 days) only after successful verification.
+

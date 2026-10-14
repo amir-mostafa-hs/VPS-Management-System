@@ -2,6 +2,8 @@
 
 A production-ready, security-hardened infrastructure toolkit for managing a single Linux Virtual Private Server (Debian 12/13, Ubuntu 22.04/24.04 LTS) running **Coolify PaaS**.
 
+> 📖 **[🇮🇷 برای مطالعه راهنمای جامع فارسی اینجا کلیک کنید (Persian Documentation)](docs/fa/README.md)** | **[Changelog](CHANGELOG.md)**
+
 This repository offloads Docker image builds completely to **GitHub Actions** and **GitHub Packages (GHCR)**, keeps host memory and CPU consumption low, enforces host-level hardening (UFW default-deny, SSH public key auth, fail2ban), and provides automated two-tier client-side encrypted backups (`rclone crypt`) to **Google Drive**.
 
 ---
@@ -92,7 +94,7 @@ All quality gates, provisioning tasks, and operational maintenance procedures ar
 | `make backup-setup` | Set up backup directories, environment configs, and systemd timers. |
 | `make backup-now` | Execute an immediate two-tier client-encrypted backup to Google Drive. |
 | `make backup-verify`| Non-destructive remote inspection of encrypted backup archives. |
-| `make backup-restore`| Interactive cold-start disaster recovery and restoration wizard. |
+| `make backup-restore`| Interactive disaster-recovery restore wizard. |
 | `make health` | Evaluate host CPU, memory, disk, inode thresholds, and Docker container states. |
 | `make clean` | Remove temporary test fixtures and scratch artifacts. |
 
@@ -114,17 +116,27 @@ All quality gates, provisioning tasks, and operational maintenance procedures ar
 │   ├── backup.example.env              # Environment template for automated backups
 │   └── server.example.env              # Host configuration template
 ├── docs/
-│   ├── architecture.md                 # System architecture, boundaries, and secrets
-│   ├── prerequisites.md                # Hardware, network, DNS, and OS support matrix
-│   ├── initial-server-setup.md         # First-login runbook, non-root user, timezone
-│   ├── security.md                     # SSH hardening, UFW, fail2ban, Docker firewalling
-│   ├── coolify.md                      # Coolify installation, Traefik, GHCR integration
-│   ├── github-actions-ghcr.md          # Offloaded CI/CD pipeline and deploy webhooks
-│   ├── backups.md                      # Two-tier backup architecture and lifecycle
-│   ├── google-drive.md                 # Google Drive & rclone crypt setup guide
-│   ├── restore-and-disaster-recovery.md# Disaster recovery drill and restoration runbook
-│   ├── monitoring.md                   # Host thresholds, container health checks, alerting
-│   └── troubleshooting.md              # Diagnostics for lockouts, crashes, disk exhaustion
+│   ├── fa/
+│   │   └── README.md                   # راهنمای جامع فارسی (Persian Operator Guide)
+│   ├── getting-started/
+│   │   ├── prerequisites.md            # Hardware, network, DNS, and OS support matrix
+│   │   └── initial-server-setup.md     # First-login runbook, non-root user, timezone
+│   ├── architecture/
+│   │   ├── architecture.md             # System architecture, boundaries, and secrets
+│   │   └── security.md                 # SSH hardening, UFW, fail2ban, Docker firewalling
+│   ├── platform/
+│   │   ├── coolify.md                  # Coolify installation, Traefik, GHCR integration
+│   │   └── github-actions-ghcr.md      # Offloaded CI/CD pipeline and deploy webhooks
+│   ├── backup-recovery/
+│   │   ├── backups.md                  # Two-tier backup architecture and lifecycle
+│   │   ├── google-drive.md             # Google Drive & rclone crypt setup guide
+│   │   └── restore-and-disaster-recovery.md # Disaster recovery drill and restoration
+│   ├── operations/
+│   │   ├── monitoring.md               # Host thresholds, container health checks, alerting
+│   │   └── troubleshooting.md          # Diagnostics for lockouts, crashes, disk exhaustion
+│   └── specs/
+│       ├── PROJECT_BRIEF.md            # Authoritative project requirements
+│       └── ANTIGRAVITY_PROMPT.md       # Implementation prompt
 ├── scripts/
 │   ├── common.sh                       # Shared logging, error handling, dry-run utilities
 │   ├── preflight.sh                    # System validation and OS compatibility check
@@ -154,6 +166,7 @@ All quality gates, provisioning tasks, and operational maintenance procedures ar
 │   ├── test_health_check.sh            # Health check thresholds and JSON format tests
 │   └── test_docs_and_repo_integrity.sh # Documentation presence and link integrity tests
 ├── Makefile                            # Unified operator and test CLI interface
+├── CHANGELOG.md                        # Formal history of changes and decisions
 └── AGENTS.md                           # Developer guidelines and agent skills
 ```
 
@@ -161,17 +174,32 @@ All quality gates, provisioning tasks, and operational maintenance procedures ar
 
 ## Documentation Index
 
-- [System Architecture](docs/architecture.md)
-- [Prerequisites & OS Support](docs/prerequisites.md)
-- [Initial Server Setup Runbook](docs/initial-server-setup.md)
-- [Host Security & Firewall Guide](docs/security.md)
-- [Coolify Setup & Operations](docs/coolify.md)
-- [GitHub Actions & GHCR CI/CD](docs/github-actions-ghcr.md)
-- [Backup System Architecture](docs/backups.md)
-- [Google Drive & Rclone Crypt Setup](docs/google-drive.md)
-- [Disaster Recovery & Restore Runbook](docs/restore-and-disaster-recovery.md)
-- [Host & Container Monitoring](docs/monitoring.md)
-- [Troubleshooting & Emergency Recovery](docs/troubleshooting.md)
+### 🇮🇷 مستندات فارسی
+- [راهنمای جامع فارسی](docs/fa/README.md)
+
+### 🚀 Getting Started
+- [Prerequisites & OS Support](docs/getting-started/prerequisites.md)
+- [Initial Server Setup Runbook](docs/getting-started/initial-server-setup.md)
+
+### 🏛 Architecture & Security
+- [System Architecture](docs/architecture/architecture.md)
+- [Host Security & Firewall Guide](docs/architecture/security.md)
+
+### 📦 Platform & CI/CD
+- [Coolify Setup & Operations](docs/platform/coolify.md)
+- [GitHub Actions & GHCR CI/CD](docs/platform/github-actions-ghcr.md)
+
+### 💾 Backup & Disaster Recovery
+- [Backup System Architecture](docs/backup-recovery/backups.md)
+- [Google Drive & Rclone Crypt Setup](docs/backup-recovery/google-drive.md)
+- [Disaster Recovery & Restore Runbook](docs/backup-recovery/restore-and-disaster-recovery.md)
+
+### 🛠 Operations & Observability
+- [Host & Container Monitoring](docs/operations/monitoring.md)
+- [Troubleshooting & Emergency Recovery](docs/operations/troubleshooting.md)
+
+### 📜 Project History
+- [Changelog](CHANGELOG.md)
 
 ---
 

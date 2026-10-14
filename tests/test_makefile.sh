@@ -35,3 +35,4 @@ assert_contains "backup-restore" "${help_output}" "make help documents 'backup-r
 assert_contains "health" "${help_output}" "make help documents 'health' target"
 
 finish_suite
+

@@ -205,3 +205,4 @@ if [[ "${FAIL2BAN_ENABLED}" == "true" ]]; then
 fi
 
 log_success "Host security hardening completed successfully."
+

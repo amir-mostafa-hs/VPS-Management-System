@@ -90,3 +90,4 @@ fi
 log_success "Automated backup subsystem configured successfully."
 printf "Timer schedule: Daily at 03:00 UTC.\n"
 printf "Check timer status: systemctl status vps-backup.timer\n"
+

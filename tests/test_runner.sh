@@ -123,3 +123,4 @@ finish_suite() {
     printf "${T_GREEN}${T_BOLD}RESULT: ALL PASSED${T_RESET}\n\n"
     return 0
 }
+

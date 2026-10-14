@@ -112,3 +112,4 @@ backup-restore:
 .PHONY: health
 health:
 	@bash scripts/health-check.sh $(ARGS)
+

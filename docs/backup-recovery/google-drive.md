@@ -1,8 +1,13 @@
 # Google Drive & rclone Crypt Setup Guide
 
-## Overview
+This guide walks you through configuring Google Drive and client-side encryption (`rclone crypt`) so automated backups are securely stored offsite.
 
-Backups in this infrastructure are synced to Google Drive using `rclone`. To protect user data and sensitive database dumps from unauthorized access in the cloud, all files are encrypted locally on the VPS using an `rclone crypt` overlay remote before uploading.
+> [!NOTE]
+> **In Plain English:**  
+> `rclone` is like a supercharged file copy tool for cloud drives.  
+> To protect your privacy, we set up two layers:  
+> 1. `gdrive`: Connects your VPS to your Google Drive account.  
+> 2. `gdrive-crypt`: Acts as a digital encryption wrapper. Every file sent through `gdrive-crypt` is scrambled with AES-256 before leaving the server. Anyone peeking at Google Drive only sees gibberish filenames and encrypted data.
 
 ---
 
@@ -21,8 +26,13 @@ rclone config
 5. **Scope:** Select `1` (Full access to all files).
 6. **Service Account Credentials:** Leave blank unless using a GCP service account.
 7. **Advanced Config:** Select `n`.
-8. **Auto Config:**
-   - If configuring directly on a headless VPS without a browser, select `n` and follow the headless authorization instructions using `rclone authorize "drive" "..."` on your local machine.
+8. **Auto Config (Headless VPS Notice):**
+   - Because a server does not have a web browser, select `n` when asked `Use web browser to automatically authenticate?`.
+   - On your local computer (where you have a web browser and `rclone` installed), run:
+     ```bash
+     rclone authorize "drive" "<your-client-id>" "<your-client-secret>"
+     ```
+   - Log in via your browser, approve access, and paste the generated JSON token back into your VPS terminal.
 9. Verify the remote and save.
 
 ---
@@ -54,7 +64,7 @@ Run `rclone config`:
 Test that your crypt remote works without errors:
 
 ```bash
-# Test creating a test file
+# Test creating a test folder
 rclone mkdir gdrive-crypt:test
 
 # List the test directory
@@ -63,3 +73,10 @@ rclone lsd gdrive-crypt:
 # Clean up
 rclone rmdir gdrive-crypt:test
 ```
+
+---
+
+## Step 4: Next Steps
+
+- Set up automated daily backup timers with [docs/backup-recovery/backups.md](backups.md).
+- Practice disaster recovery with [docs/backup-recovery/restore-and-disaster-recovery.md](restore-and-disaster-recovery.md).
