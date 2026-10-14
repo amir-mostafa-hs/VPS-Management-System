@@ -1,0 +1,15 @@
+[Unit]
+Description=Trigger VPS Infrastructure Automated Daily Backup
+Documentation=https://github.com/amir-mostafa-hs/VPS-Management-System
+
+[Timer]
+# Trigger daily at 03:00 UTC
+OnCalendar=*-*-* 03:00:00 UTC
+# Randomize trigger within 15 minutes to avoid traffic spikes
+RandomizedDelaySec=900
+# Run immediately if the server was powered off during the scheduled time
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

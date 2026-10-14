@@ -1,0 +1,46 @@
+# Secrets and Environment Variables
+.env
+.env.*
+*.env
+!*.example.env
+!server.example.env
+!backup.example.env
+
+# Private Keys, Certificates, and Credentials
+*.key
+*.pem
+*.crt
+*.pfx
+*.p12
+id_rsa*
+id_ed25519*
+rclone.conf
+.rclone/
+
+# Backups, Dumps, and Compressed Archives
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.gz
+*.bz2
+*.bak
+*.sql
+*.dump
+backups/
+/var/backups/
+tmp/
+.tmp/
+
+# Logs and runtime artifacts
+*.log
+*.pid
+
+# OS and Editor state
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+

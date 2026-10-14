@@ -1,0 +1,28 @@
+[Unit]
+Description=VPS Infrastructure Automated Two-Tier Encrypted Backup
+Documentation=https://github.com/amir-mostafa-hs/VPS-Management-System
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/var/backups/vps
+ExecStart=/bin/bash /opt/vps-infrastructure/scripts/backup-now.sh
+
+# Security Hardening Directives
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ReadWritePaths=/var/backups/vps /tmp /data/coolify
+NoNewPrivileges=true
+
+# Standard Output & Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=vps-backup
+
+[Install]
+WantedBy=multi-user.target
+
