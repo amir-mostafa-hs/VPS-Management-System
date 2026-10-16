@@ -8,7 +8,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/common.sh"
 
-COOLIFY_INSTALLER_URL="https://cdn.coolify.io/coolify/install.sh"
+COOLIFY_INSTALLER_URL="https://cdn.coollabs.io/coolify/install.sh"
 DRY_RUN=false
 FORCE_YES=false
 CHECK_PREREQS_ONLY=false
